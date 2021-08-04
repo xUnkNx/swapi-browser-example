@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+		<title>База знаний о вселенной фильма "Звёздные войны"</title>
+		<script src="js/vue.min.js"></script>
+		<script src="js/langs/ru.js"></script>
+		<script src="js/app.min.js"></script>
+		<link rel="stylesheet" href="css/normalize.min.css"/>
+		<link rel="stylesheet" href="css/app.css"/>
+	</head>
+	<body>
+		<div class="block"><a href="index.html">База знаний о вселенной фильма "Звёздные войны"</a></div>
+		<div class="underline"></div>
+		<div id="main">
+			<div class="menu">
+			<ol>
+			<li v-for="but in items" style="list-style-type: upper-roman;">
+				<button v-on:click="expand(but.id,but.url,true)">
+					{{but.part}}
+				</button>
+				<transition name="cat-fade">
+				<ol v-if="but.expanded">
+					<li v-for="sub in but.expand">
+						<button @click="subview(but.id,sub._id)">{{sub.name ? sub.name : sub.title}}</button>
+					</li>
+					<li v-if="but.expand.length < but.count">
+						<button @click="expand(but.id,but.nexturl)">{{$t.Load_More}}</button>
+					</li>
+				</ol>
+				</transition>
+			</li>
+			<li style="list-style-type: upper-roman;">
+				<button v-on:click="loadStatistics()">
+					{{$t.Statistics}}
+				</button>
+			</li>
+			</ol>
+			</div>
+			<div class="content">
+				<table v-if="selected" class="db">
+					<thead>
+						<tr>
+							<th>{{$t.Attribute}}</th>
+							<th>{{$t.Value}}</th>
+						</tr>
+					</thead>
+					<tbody class="tbody">
+						<tr v-for="(value,attribute) in select">
+							<td>{{attribute}}</td>
+							<td v-if="typeof(value)==='object'" class="tdhref">
+								[ <template v-for="(sub,subid) in value">
+									<template v-if="subid > 0">,</template>
+									<a href="#" v-on:click.prevent="subview(sub._type,sub._id)">"{{sub.name ? sub.name : sub.title}}"</a>
+								</template> ]
+							</td>
+							<td v-else>{{value}}</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</body>
+</html>
